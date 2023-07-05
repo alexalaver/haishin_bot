@@ -138,7 +138,7 @@ async def other(message: types.Message, state: FSMContext):
             await state.reset_state()
         else:
             try:
-                if message.content_type == types.ContentType.PHOTO or message.content_type == types.ContentType.PHOTO:
+                if message.content_type == types.ContentType.PHOTO or message.content_type == types.ContentType.DOCUMENT:
                     option = db.set_cashe(message.from_user.id)[1]
                     name = db.set_cashe(message.from_user.id)[0]
                     tel = db.set_cashe(message.from_user.id)[2]
