@@ -9,13 +9,13 @@ from db import Data
 db = Data("database.db")
 
 logging.basicConfig(level=logging.INFO)
-
 bot = Bot(cfg.TOKEN)
 dp = Dispatcher(bot, storage=MemoryStorage())
 
 class info_reg(StatesGroup):
     name = State()
     tell = State()
+    other = State()
 
 @dp.message_handler(commands=['start'])
 async def start(message: types.Message):
@@ -103,14 +103,12 @@ async def inforeg1(message: types.Message, state: FSMContext):
             else:
                 if message.text[0] == "+" and type(int(message.text[1:])) == int or type(int(message.text)) == int:
                     if 5 <= len(message.text) <= 50:
-                        option = db.set_cashe(message.from_user.id)[1]
-                        name = db.set_cashe(message.from_user.id)[0]
-                        tel = message.text
-                        db.add_message(message.from_user.id, option, name, tel)
-                        db.delete_cashe(message.from_user.id)
-                        await message.answer(cfg.right, reply_markup=markup)
-                        await bot.send_message(chat_id="@haishinharcumner", text=f"Նոր գործարք`\nՏարբերակ: {option}\nԱնուն: {name}\nՀեռախոսահամար: {tel}")
+                        # db.delete_cashe(message.from_user.id)
+                        await message.answer(cfg.register3)
+                        # await bot.send_message(chat_id="@haishinharcumner", text=f"Նոր գործարք`\nՏարբերակ: {option}\nԱնուն: {name}\nՀեռախոսահամար: {tel}")
+                        db.add_tel_cashe(message.from_user.id, message.text)
                         await state.finish()
+                        await info_reg.other.set()
                     else:
                         await message.answer(cfg.option_tel_failed)
                         await info_reg.tell.set()
@@ -120,6 +118,54 @@ async def inforeg1(message: types.Message, state: FSMContext):
         except Exception as e:
             await message.answer(cfg.failed)
             print(f"[FAILED] {e}")
+
+@dp.message_handler(state=info_reg.other, content_types=[types.ContentType.PHOTO, types.ContentType.DOCUMENT, 'text'])
+async def other(message: types.Message, state: FSMContext):
+    if message.chat.type == "private":
+        markup = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
+        button1 = types.KeyboardButton(cfg.but1)
+        button2 = types.KeyboardButton(cfg.but2)
+        button3 = types.KeyboardButton(cfg.but3)
+        button4 = types.KeyboardButton(cfg.but4)
+        markup.add(button1, button2, button3, button4)
+        if message.text == cfg.but5:
+            await message.answer(cfg.return1, reply_markup=markup)
+            db.delete_cashe(message.from_user.id)
+            await state.reset_state()
+        elif message.text == cfg.but6:
+            await message.answer(cfg.cancel, reply_markup=markup)
+            db.delete_cashe(message.from_user.id)
+            await state.reset_state()
+        else:
+            try:
+                if message.content_type == types.ContentType.PHOTO or message.content_type == types.ContentType.PHOTO:
+                    option = db.set_cashe(message.from_user.id)[1]
+                    name = db.set_cashe(message.from_user.id)[0]
+                    tel = db.set_cashe(message.from_user.id)[2]
+                    db.add_message(message.from_user.id, option, name, tel)
+                    await bot.send_message(chat_id="@haishinharcumner", text=f"Նոր գործարք`\nՏարբերակ: {option}\nԱնուն: {name}\nՀեռախոսահամար: {tel}\nԱյլ:")
+                    await message.answer(cfg.right, reply_markup=markup)
+                    db.delete_cashe(message.from_user.id)
+                    await state.finish()
+                    if message.content_type == types.ContentType.PHOTO:
+                        photos = message.photo[0].file_id
+                        await bot.send_photo(chat_id='@haishinharcumner', photo=photos)
+                    elif message.content_type == types.ContentType.DOCUMENT:
+                        document = message.document.file_id
+                        await bot.send_document(chat_id="@haishinharcumner", document=document)
+                elif message.text:
+                    db.delete_cashe(message.from_user.id)
+                    await message.answer(cfg.bac, reply_markup=markup)
+                    await state.finish()
+                else:
+                    db.delete_cashe(message.from_user.id)
+                    await message.answer(cfg.bac, reply_markup=markup)
+                    await state.finish()
+            except Exception as e:
+                db.delete_cashe(message.from_user.id)
+                print(f"[ERROR] {e}")
+                await state.finish()
+                await message.answer(cfg.error)
 
 @dp.message_handler()
 async def default(message: types.Message):
@@ -146,9 +192,21 @@ async def default(message: types.Message):
             button3 = types.KeyboardButton(cfg.but3)
             button4 = types.KeyboardButton(cfg.but4)
             markup1.add(button1, button2, button3, button4)
+            db.delete_cashe(message.from_user.id)
             await message.answer(cfg.return2, reply_markup=markup1)
         elif message.text == cfg.but6:
+            db.delete_cashe(message.from_user.id)
             await message.answer(cfg.false_cancel)
+        for hrm in cfg.hramanner:
+            if message.text.upper() == hrm.upper():
+                markup1 = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
+                button1 = types.KeyboardButton(cfg.but1)
+                button2 = types.KeyboardButton(cfg.but2)
+                button3 = types.KeyboardButton(cfg.but3)
+                button4 = types.KeyboardButton(cfg.but4)
+                markup1.add(button1, button2, button3, button4)
+                db.delete_cashe(message.from_user.id)
+                await message.answer(cfg.begin, reply_markup=markup1)
 
 
 

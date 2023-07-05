@@ -30,9 +30,14 @@ class Data:
             self.cursor.execute("UPDATE cashe SET us_text = ? WHERE id = ?", (us_text, id,))
             self.connect.commit()
 
+    def add_tel_cashe(self, id, tel):
+        with self.connect:
+            self.cursor.execute("UPDATE cashe SET tel = ? WHERE id = ?", (tel, id,))
+            self.connect.commit()
+
     def set_cashe(self, id):
         with self.connect:
-            return self.cursor.execute("SELECT us_text, option FROM cashe WHERE id = ?", (id,)).fetchone()
+            return self.cursor.execute("SELECT us_text, option, tel FROM cashe WHERE id = ?", (id,)).fetchone()
 
     def delete_cashe(self, id):
         with self.connect:
@@ -74,4 +79,7 @@ class Data:
                 self.connect.commit()
             else:
                 return False
+
+
+
 
