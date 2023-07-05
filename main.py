@@ -158,6 +158,11 @@ async def other(message: types.Message, state: FSMContext):
                     await message.answer(cfg.bac, reply_markup=markup)
                     await state.finish()
                 else:
+                    option = db.set_cashe(message.from_user.id)[1]
+                    name = db.set_cashe(message.from_user.id)[0]
+                    tel = db.set_cashe(message.from_user.id)[2]
+                    db.add_message(message.from_user.id, option, name, tel)
+                    await bot.send_message(chat_id="@haishinharcumner", text=f"Նոր գործարք`\nՏարբերակ: {option}\nԱնուն: {name}\nՀեռախոսահամար: {tel}\nԱյլ: [Լրացուցիչ տեղեկություններ չկան]")
                     db.delete_cashe(message.from_user.id)
                     await message.answer(cfg.bac, reply_markup=markup)
                     await state.finish()
