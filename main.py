@@ -143,7 +143,7 @@ async def other(message: types.Message, state: FSMContext):
                     name = db.set_cashe(message.from_user.id)[0]
                     tel = db.set_cashe(message.from_user.id)[2]
                     db.add_message(message.from_user.id, option, name, tel)
-                    await bot.send_message(chat_id="@haishinharcumner", text=f"Նոր գործարք`\nՏարբերակ: {option}\nԱնուն: {name}\nՀեռախոսահամար: {tel}\nԱյլ:")
+                    await bot.send_message(chat_id="@haishinharcumner", text=f"Նոր գործարք`\nՏարբերակ: {option}\nԱնուն և ազգանուն: {name}\nՀեռախոսահամար: {tel}\nԱյլ:")
                     await message.answer(cfg.right, reply_markup=markup)
                     db.delete_cashe(message.from_user.id)
                     await state.finish()
@@ -176,7 +176,7 @@ async def other(message: types.Message, state: FSMContext):
                 db.delete_cashe(message.from_user.id)
                 print(f"[ERROR] {e}")
                 await state.finish()
-                await message.answer(cfg.error)
+                await message.answer(cfg.error, reply_markup=markup)
 
 @dp.message_handler()
 async def default(message: types.Message):
