@@ -1,7 +1,7 @@
 TOKEN = "6325036115:AAE0BExnsIPKqDAzjUWYaTvEUkwoyXIC-Ic"
 
 but1 = "Շինարարություն"
-but2 = "Բեռնափոխադրում"
+but2 = "Լոգիստիկա"
 but3 = "Վաճառք"
 but4 = "Առաջարկ"
 but5 = "Վերադառնալ"
