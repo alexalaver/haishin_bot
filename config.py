@@ -1,4 +1,6 @@
 TOKEN = "6325036115:AAE0BExnsIPKqDAzjUWYaTvEUkwoyXIC-Ic"
+group = "@haishinharcumner"
+
 
 but1 = "Շինարարություն"
 but2 = "Լոգիստիկա"
